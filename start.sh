@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
-## Entry point for the TeamCity server container.
+## Entry point for the TeamCity container.
 ##
 
 set -e
+
+umask 0002
 
 xx() {
 	echo "+" "$@"
@@ -26,6 +28,20 @@ fi
 
 ##
 
+xx :
+xx cd "${teamcity_docker_image_home}"
+
+xx :
+xx mkdir -p "${teamcity_docker_image_data_root}"
+xx mkdir -p "${teamcity_docker_image_logs_root}"
+
+xx ln -snf "${teamcity_docker_image_data_root}" data
+xx ln -snf "${teamcity_docker_image_logs_root}" logs
+
+export TEAMCITY_DATA_PATH="${teamcity_docker_image_home}/data"
+
+##
+
 echo
 echo "Environment variables:"
 xx :
@@ -36,20 +52,23 @@ printenv_sorted
 xx :
 xx cd "${teamcity_docker_image_home}"
 
-case x"${-}"x in
-*i*)
+if [ $# -gt 0 ] ; then
 	echo
-	echo "Launching a shell..."
+	echo "Running command..."
 	xx :
-	xx_eval "exec bash -l"
-	;;
-*)
+	xx exec "$@"
+else
+if [ -t 0 ] ; then
 	echo
-	echo "Launching TeamCity server..."
+	echo "Launching shell..."
 	xx :
-	xx_eval "exec ${teamcity_docker_image_base_entrypoint:?}"
-	;;
-esac
+	xx exec bash -l
+else
+	echo
+	echo "Launching TeamCity..."
+	xx :
+	xx exec bin/teamcity-server.sh run
+fi;fi
 
 ##
 

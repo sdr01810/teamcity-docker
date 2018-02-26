@@ -9,14 +9,14 @@ image_tag                = ${docker_hub_user}/${container_name}
 
 ##
 
-all :: build push
+all :: build test
 
 build ::
 	docker build ${docker_build_args_extra} --tag "${image_tag}" .
 
+test :: build
+	docker run "${image_tag}" ls -Alh
+
 push ::
 	docker push "${image_tag}"
-
-run ::
-	docker run "${image_tag}"
 
