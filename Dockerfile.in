@@ -1,4 +1,4 @@
-FROM openjdk:8-jre
+FROM @make:docker_base_image@
 
 STOPSIGNAL SIGTERM
 
