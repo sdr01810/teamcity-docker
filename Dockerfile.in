@@ -24,14 +24,29 @@ VOLUME [ "$teamcity_docker_image_logs_root" ]
 ##
 
 USER    root
+WORKDIR "${java_docker_image_setup_root}"
+
+COPY modules/java-docker/oracle-java-package.sh ./
+
+COPY ./ ./
+
+RUN  chmod a+rx *.sh
+
+##
+
+USER    root
 WORKDIR "${teamcity_docker_image_setup_root}"
 
-COPY packages.needed.0*.txt ./
-RUN  egrep -v -h '^\s*#' packages.needed.0*.txt > packages.needed.filtered.txt
+RUN egrep -v -h '^\s*#' packages.needed.[0-9]*.txt | ./oracle-java-package.sh egrep -v > packages.needed.filtered.standard.txt
+RUN egrep -v -h '^\s*#' packages.needed.[0-9]*.txt | ./oracle-java-package.sh egrep    > packages.needed.filtered.oracle-java.txt
 
-RUN apt-get update && apt-get install -y apt-utils && \
-	apt-get install -y $(cat packages.needed.filtered.txt) && \
-	rm -rf /var/lib/apt/lists/* ;
+RUN apt-get update && \
+	DEBIAN_FRONTEND=noninteractive apt-get install -y apt-utils debconf && \
+	DEBIAN_FRONTEND=noninteractive apt-get install -y $(cat packages.needed.filtered.standard.txt) && \
+	./oracle-java-package.sh install $(cat packages.needed.filtered.oracle-java.txt) && \
+	rm -rf /var/local/downloads/* && \
+	rm -rf /var/lib/apt/lists/* && \
+	:
 
 ##
 
@@ -42,19 +57,12 @@ ARG teamcity_dist_version=2017.2.2
 ARG teamcity_dist_sha256=cd735330e800473c5f1a5df8c6d55238d9931464cf14ead8cb8c4e8edfa38238
 ARG teamcity_dist_url=https://download-cf.jetbrains.com/teamcity/TeamCity-${teamcity_dist_version}.tar.gz
 
-COPY download-and-unpack.sh .
-RUN  chmod a+rx download-and-unpack.sh
-
-RUN ./download-and-unpack.sh \
-	"${teamcity_dist_url}" "${teamcity_dist_sha256}" "${teamcity_docker_image_home}"
+RUN ./download-and-unpack.sh "${teamcity_dist_url}" "${teamcity_dist_sha256}" "${teamcity_docker_image_home}"
 
 ##
 
 USER    root
 WORKDIR "${teamcity_docker_image_setup_root}"
-
-COPY start.sh .
-RUN  chmod a+rx start.sh
 
 ENTRYPOINT ["./start.sh"]
 

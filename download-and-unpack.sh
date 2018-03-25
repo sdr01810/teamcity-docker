@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 ## Download and unpack a package distribution tarball.
+## By Stephen D. Rogers <inbox.c7r@steve-rogers.com>, 2018-01.
 ##
 ## Arguments:
 ##

@@ -1,0 +1,3 @@
+[submodule "modules/java-docker"]
+	path = modules/java-docker
+	url = https://github.com/sdr01810/java-docker
