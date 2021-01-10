@@ -2,6 +2,8 @@ FROM @make:docker_base_image@
 
 STOPSIGNAL SIGTERM
 
+ENV JAVA_ARTIFACTS_ROOT_DPN=${JAVA_ARTIFACTS_ROOT_DPN:-/var/local/downloads}
+
 #^
 #^-- specified by the base image
 #
@@ -37,14 +39,17 @@ RUN  chmod a+rx *.sh
 USER    root
 WORKDIR "${teamcity_docker_image_setup_root}"
 
-RUN egrep -v -h '^\s*#' packages.needed.[0-9]*.txt | ./oracle-java-package.sh egrep -v > packages.needed.filtered.standard.txt
-RUN egrep -v -h '^\s*#' packages.needed.[0-9]*.txt | ./oracle-java-package.sh egrep    > packages.needed.filtered.oracle-java.txt
+RUN egrep -v -h '^\s*#' packages.needed.[0-9]*.txt | \
+	./oracle-java-package.sh egrep -v > packages.needed.filtered.standard.txt
+
+RUN egrep -v -h '^\s*#' packages.needed.[0-9]*.txt | \
+	./oracle-java-package.sh egrep    > packages.needed.filtered.oracle-java.txt
 
 RUN apt-get update && \
 	DEBIAN_FRONTEND=noninteractive apt-get install -y apt-utils debconf && \
 	DEBIAN_FRONTEND=noninteractive apt-get install -y $(cat packages.needed.filtered.standard.txt) && \
 	./oracle-java-package.sh install $(cat packages.needed.filtered.oracle-java.txt) && \
-	rm -rf /var/local/downloads/* && \
+	rm -rf "${JAVA_ARTIFACTS_ROOT_DPN:?}"/* && \
 	rm -rf /var/lib/apt/lists/* && \
 	:
 
