@@ -3,7 +3,7 @@ docker_base_image        = ${docker_base_os}:16.04
 
 docker_build_args_extra  = # --no-cache
 
-docker_hub_user          = $(or ${DOCKER_HUB_USER},UNNOWN_DOCKER_HUB_USER)
+docker_hub_user          = $(or ${DOCKER_HUB_USER},UNKNOWN_DOCKER_HUB_USER)
 #^-- override this on the make(1) command line or in the environment
 
 container_name           = $(shell cat Docker.container.name)
