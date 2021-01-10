@@ -1,14 +1,14 @@
 ####
-## Bare bones needs
-##
+# Bare bones needs
+#
 bash
 less
 perl
 procps
 
 ####
-## Archive formats
-##
+# Archive formats
+#
 bzip2
 cpio
 gzip
@@ -18,26 +18,26 @@ zip
 xz-utils
 
 ####
-## Downloaders
-## - use curl to download files via HTTP, FTP, etc.
-## - use git to download/clone gists from GitHub
-##
+# Downloaders
+# - use curl to download files via HTTP, FTP, etc.
+# - use git to download/clone gists from GitHub
+#
 curl
 git
 
 ####
-## Text editors
-##
+# Text editors
+#
 vim
 
 ####
-## Patch utilities
-##
+# Patch utilities
+#
 colordiff
 diffutils
 patch
 patchutils
 
 ####
-## Other
-##
+# Other
+#
