@@ -40,6 +40,10 @@ xx ln -snf "${teamcity_docker_image_logs_root}" logs
 
 export TEAMCITY_DATA_PATH="${teamcity_docker_image_home}/data"
 
+export JRE_HOME="${JRE_HOME:-${ORACLE_JRE_HOME:?Missing environment variable: JRE_HOME}"
+
+export JAVA_HOME="${JAVA_HOME:-${ORACLE_JAVA_HOME:?Missing environment variable: JAVA_HOME}"
+
 ##
 
 echo
